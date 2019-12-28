@@ -36,10 +36,6 @@ function main() {
           return;
         }
 
-        // setupUniform('advect_component', 'u_maxIterations');
-        // setupUniform('mandlebrot', 'u_resolution');
-        // setupUniform('mandlebrot', 'u_zoom');
-        // setupUniform('mandlebrot', 'u_zoomPoint');
         setupUniform('mandlebrot', 'u_lowerLeftPoint');
         setupUniform('mandlebrot', 'u_boxDimensions');
       }
@@ -60,12 +56,7 @@ function main() {
   jacobi_iterations = 5;
   Render(gl, n, deltatime, density, jacobi_iterations);
 }
-// window.onresize = function(){
-//   c = document.getElementById("webgl");
-//   c.width = window.innerWidth;
-//   c.height = window.innerHeight;
-//   gl.viewport(0, 0, c.width, c.height );
-// }
+
 function setupGeometry(gl) {
   var verticesTexCoords = new Float32Array([
     /*Vertex coordinates, texture coordinate*/
@@ -140,6 +131,8 @@ function Render(gl, n, deltatime, density, jacobi_iterations){
   }
   window.onkeydown = function(e){
 
+    if (!canCall) 
+    return;
 
     if (e.keyCode == '40'){ // down arrow
       zoom = 1.05;
@@ -167,6 +160,11 @@ function Render(gl, n, deltatime, density, jacobi_iterations){
 
     renderToTexture(gl, null, canvas.width, canvas.height);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);
+
+    canCall = false;
+        setTimeout(function(){
+            canCall = true;
+        }, 300);
   }
 }
 
