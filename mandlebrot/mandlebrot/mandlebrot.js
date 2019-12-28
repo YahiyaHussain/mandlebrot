@@ -57,15 +57,15 @@ function main() {
 
   var gui = new dat.GUI();
   data = [];
-  data.iterations = 2000;
+  data.iterationQuality = 2000;
   data.msDelay = 100;
   data.lerpFactor = .2;
-  var controls = gui.add(data, 'iterations', 100, 20000);
+  var controls = gui.add(data, 'iterationQuality', 100, 20000);
   gui.add(data, 'lerpFactor', 0, 1);
   gui.add(data, 'msDelay', 5, 1000);
   controls.onFinishChange(function(value){
           value = Math.floor(value);
-          console.log("changed iterations to: ", value);
+          console.log("changed iterationQuality to: ", value);
       {
         
         var oReq = new XMLHttpRequest();
