@@ -25,11 +25,13 @@ function main() {
         oReq.open("GET", "texture.vert", false);
         oReq.send();
         VSHADER_SOURCE = oReq.responseText;
+        
     
         var oReq = new XMLHttpRequest();
         oReq.open("GET", "mandlebrot.frag", false);
         oReq.send();
         FSHADER_SOURCE = oReq.responseText;
+        FSHADER_SOURCE = FSHADER_SOURCE.replace('MAX_ITERATIONS', '1000');
 
         if (!initShaders(gl, VSHADER_SOURCE, FSHADER_SOURCE, 'mandlebrot')) {
           console.log('Failed to intialize shaders.');
@@ -50,11 +52,76 @@ function main() {
   // Specify the color for clearing <canvas> (if needed)
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
-  // Set texture
-  deltatime = .07;
-  density = 5;
-  jacobi_iterations = 5;
-  Render(gl, n, deltatime, density, jacobi_iterations);
+  
+  //dat.gui
+
+  var gui = new dat.GUI();
+  v = [];
+  v.iterations = 1000;
+  var controls = gui.add(v, 'iterations', 100, 20000);
+  controls.onFinishChange(function(value){
+          value = Math.floor(value);
+          console.log("changed iterations to: ", value);
+      {
+        
+        var oReq = new XMLHttpRequest();
+        oReq.open("GET", "texture.vert", false);
+        oReq.send();
+        VSHADER_SOURCE = oReq.responseText;
+        
+    
+        var oReq = new XMLHttpRequest();
+        oReq.open("GET", "mandlebrot.frag", false);
+        oReq.send();
+        FSHADER_SOURCE = oReq.responseText;
+        FSHADER_SOURCE = FSHADER_SOURCE.replace('MAX_ITERATIONS', value.toString());
+        if (!initShaders(gl, VSHADER_SOURCE, FSHADER_SOURCE, 'mandlebrot')) {
+          console.log('Failed to intialize shaders.');
+          return;
+        }
+
+        setupUniform('mandlebrot', 'u_lowerLeftPoint');
+        setupUniform('mandlebrot', 'u_boxDimensions');
+      }
+  });
+
+
+  // controller = {
+  //   'iterations':function(x){
+
+  //     console.log("changed iterations to: ", x);
+  //     {
+  //       var oReq = new XMLHttpRequest();
+  //       oReq.open("GET", "texture.vert", false);
+  //       oReq.send();
+  //       VSHADER_SOURCE = oReq.responseText;
+  //       VSHADER_SOURCE.replace('MAX_ITERATIONS', x.toString());
+    
+  //       var oReq = new XMLHttpRequest();
+  //       oReq.open("GET", "mandlebrot.frag", false);
+  //       oReq.send();
+  //       FSHADER_SOURCE = oReq.responseText;
+
+  //       if (!initShaders(gl, VSHADER_SOURCE, FSHADER_SOURCE, 'mandlebrot')) {
+  //         console.log('Failed to intialize shaders.');
+  //         return;
+  //       }
+
+  //       setupUniform('mandlebrot', 'u_lowerLeftPoint');
+  //       setupUniform('mandlebrot', 'u_boxDimensions');
+  //     }
+
+  //   }
+  // }
+
+  // gui.add(controller, 'iterations', 1000, 20000);
+
+
+
+
+
+
+  Render(gl, n);
 }
 
 function setupGeometry(gl) {
@@ -103,7 +170,7 @@ function setupGeometry(gl) {
   return n;
 }
 
-function Render(gl, n, deltatime, density, jacobi_iterations){
+function Render(gl, n){
 
 
   gl.useProgram(gl.programs['mandlebrot']);
@@ -129,6 +196,7 @@ function Render(gl, n, deltatime, density, jacobi_iterations){
     mousePosX = e.clientX;
     mousePosY = e.clientY;
   }
+  canCall = true;
   window.onkeydown = function(e){
 
     if (!canCall) 
@@ -137,7 +205,7 @@ function Render(gl, n, deltatime, density, jacobi_iterations){
     if (e.keyCode == '40'){ // down arrow
       zoom = 1.05;
     }
-    else{
+    else if(e.keyCode == '38'){ //up?
       zoom = 0.95238095238;
     }
 

@@ -7,7 +7,7 @@ precision mediump float;
 #define divide(a, b) vec2(((a.x*b.x+a.y*b.y)/(b.x*b.x+b.y*b.y)),((a.y*b.x-a.x*b.y)/(b.x*b.x+b.y*b.y)))
 
 #define PI 3.1415926538 
-#define MAX_ITERATIONS 9000
+
 // uniform sampler2D u_data; 
 // uniform sampler2D u_velocity;
 // uniform float u_deltaTime;
