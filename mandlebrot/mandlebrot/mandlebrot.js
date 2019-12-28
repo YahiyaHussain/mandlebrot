@@ -58,9 +58,11 @@ function main() {
   var gui = new dat.GUI();
   data = [];
   data.iterations = 2000;
-  data.msDelay = 300;
+  data.msDelay = 100;
+  data.lerpFactor = .2;
   var controls = gui.add(data, 'iterations', 100, 20000);
-  gui.add(data, 'msDelay', 10, 1000);
+  gui.add(data, 'lerpFactor', 0, 1);
+  gui.add(data, 'msDelay', 5, 1000);
   controls.onFinishChange(function(value){
           value = Math.floor(value);
           console.log("changed iterations to: ", value);
@@ -173,7 +175,7 @@ function Render(gl, n){
     if (e.keyCode == '40'){ // down arrow
       zoom = 1.05;
     }
-    else if(e.keyCode == '38'){ //up?
+    else if(e.keyCode == '38'){ //up
       zoom = 0.95238095238;
     }
 
@@ -187,8 +189,8 @@ function Render(gl, n){
     u_boxDimensions[0] *= zoom;
     u_boxDimensions[1] *= zoom;
     this.console.log(u_boxDimensions);
-    u_lowerLeftPoint[0] = mouseGridCoord_X - u_boxDimensions[0]*.5
-    u_lowerLeftPoint[1] = mouseGridCoord_Y - u_boxDimensions[1]*.5
+    u_lowerLeftPoint[0] = u_lowerLeftPoint[0]*(1 - data.lerpFactor) + (mouseGridCoord_X - u_boxDimensions[0]*.5)*data.lerpFactor;
+    u_lowerLeftPoint[1] = u_lowerLeftPoint[1]*(1 - data.lerpFactor) + (mouseGridCoord_Y - u_boxDimensions[1]*.5)*data.lerpFactor;
     
 
     gl.uniform2fv(gl.shaders['mandlebrot'].uniforms['u_boxDimensions'], u_boxDimensions);
